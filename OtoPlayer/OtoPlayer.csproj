@@ -9,7 +9,7 @@
     <Product>音ならしますよっ！</Product>
     <Title>音ならしますよっ！</Title>
     <Description>ショートカットで曲・効果音を仮想オーディオデバイスへ再生する常駐アプリ</Description>
-    <Version>1.1.1</Version>
+    <Version>1.0.0</Version>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
   </PropertyGroup>
