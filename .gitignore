@@ -1,0 +1,5 @@
+OtoPlayer/bin/
+OtoPlayer/obj/
+.dotnet/
+.nuget/
+dist/

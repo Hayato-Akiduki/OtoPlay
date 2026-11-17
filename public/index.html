@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>音鳴らしますねぇ！</title><link rel="stylesheet" href="/style.css"><script type="module" src="/app.js"></script></head>
+<body><main>
+<header><span class="tag">LOCAL SOUND PLAYER</span><h1>音鳴らしますねぇ！</h1><p>お気に入りの音を、仮想マイクへ。</p></header>
+<section><h2>01 <span>音の送り先</span></h2>
+<p>ここでは <strong>CABLE Input</strong> を選択。通話・録音アプリのマイクは <strong>CABLE Output</strong> に設定してください。</p>
+<button id="devices">出力デバイスを読み込む</button>
+<label for="output">出力先</label><select id="output" disabled><option value="">デバイスを読み込んでください</option></select>
+<p class="hint">デバイス名の取得時に、ブラウザーがマイクの許可を求める場合があります。取得後すぐにマイクを停止し、録音・送信はしません。</p>
+</section>
+<section><h2>02 <span>鳴らす音</span></h2>
+<label class="file" for="files">＋ 音声ファイルを追加<input id="files" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac" multiple></label>
+<div id="tracks"><p class="hint">WAV / MP3 などの音声ファイルを追加してください。</p></div>
+<div class="controls"><button id="stop" disabled>■ 停止</button><label><input id="loop" type="checkbox"> リピート</label></div>
+<label for="volume">音量 <output id="volumeValue">70%</output></label><input id="volume" type="range" min="0" max="100" value="70">
+<audio id="audio" preload="metadata"></audio>
+<p id="now" class="hint">再生待ち</p>
+</section>
+<p id="status" role="status" aria-live="polite">最初に出力デバイスを読み込んでください。</p>
+<footer>ファイルはこのブラウザー内で再生されます。サーバーへのアップロードはありません。</footer>
+</main></body></html>
