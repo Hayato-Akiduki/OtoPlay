@@ -4,9 +4,19 @@
 
 リポジトリ名は **OtoPlay**、アプリ名は **音鳴らしますねぇ！** です。
 
-[Releases](https://github.com/Hayato-Akiduki/OtoPlay/releases) から Windows x64 用 ZIP をダウンロードし、展開して `OtoPlayer.exe` を起動してください。音声ファイルは同梱していません。
+[Releases](https://github.com/Hayato-Akiduki/OtoPlay/releases/latest) から **HayatoAkiduki.OtoPlay-win-Setup.exe** をダウンロードして実行してください。スタートメニュー・デスクトップに「音鳴らしますねぇ！」が追加されます。Windows x64 用で、.NET ランタイムは同梱しています。音声ファイルは同梱していません。
 
-`dist/win-x64/OtoPlayer.exe` をダブルクリックして起動します。Windows x64 用で、.NET ランタイムを同梱しているため別途インストールは不要です。VB-CABLE ドライバーはインストール済みのものを使用します。
+旧 ZIP 版を使用している場合は、トレイの右クリック →「終了」で終了してからインストールしてください。音声一覧・ショートカット・音量などの既存設定は引き継ぎます。VB-CABLE ドライバーはインストール済みのものを使用します。
+
+### トレイアイコンと自動更新
+
+タスクトレイには緑の音符アイコンを表示します。見当たらない場合はタスクバー右側の「隠れているインジケーター」（∧）を開いてください。常に表示するかは Windows のタスクバー設定で変更できます。Windows Explorer 再起動後もアイコンを再登録します。
+
+インストール版は、起動時と起動中の6時間ごとに GitHub Releases を確認します。新しいバージョンは自動ダウンロードし、トレイからアプリを「終了」したときに適用します（× は常駐のため終了しません）。再生中に勝手に再起動しません。すぐに切り替えたい場合はトレイの「更新を適用して再起動」を選べます。「更新を確認」で手動チェックでき、確認結果もトレイメニューに表示します。通信失敗時は次回に再試行します。
+
+旧 v1.0.0 には自動更新機能がないため、初回のみ Setup.exe で入れ替えてください。ポータブル版・開発用 exe では自動更新は利用できません。アンインストールは Windows の「インストールされているアプリ」から行えます。設定・登録元の音声ファイルはインストール先の外に保存されます。
+
+インストーラーはコード署名をしていないため、Windows が発行元不明の警告を表示する場合があります。
 
 1. 出力先で **CABLE Input** を選びます。初回は見つかれば自動選択します。
 2. 「＋ 音声を追加」でファイルを登録し、一覧から選んで「▶ 再生」を押します。
@@ -36,6 +46,14 @@
 ```powershell
 dotnet publish OtoPlayer/OtoPlayer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -o dist/win-x64
 ```
+
+インストーラー・更新パッケージ・更新フィードの作成と検証:
+
+```powershell
+./scripts/Build-Release.ps1
+```
+
+出力先は `dist/releases-<Version>/`。Velopack SDK と vpk は 1.2.161 に固定しています。次の公開時は csproj の Version を上げ、main に反映してから `v<Version>` タグを push してください。GitHub Actions がテスト後に Setup.exe・full.nupkg・releases.win.json などを一緒に Releases に公開します。更新に必要なため、更新パッケージやフィードを削除しないでください。署名が必要な配布では、別途コード署名の設定を追加してください。
 
 以下は以前のブラウザー版の説明です。
 

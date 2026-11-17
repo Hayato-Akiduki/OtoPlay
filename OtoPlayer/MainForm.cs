@@ -28,6 +28,12 @@ public sealed class MainForm : Form
     private readonly Label status = new() { Text = "音声ファイルを追加してください。", Dock = DockStyle.Fill, AutoEllipsis = true };
     private readonly Label volumeLabel = new() { Text = "音量 70%", AutoSize = true };
     private readonly NotifyIcon tray;
+    private readonly Icon appIcon;
+    private readonly AppUpdates updates;
+    private readonly System.Windows.Forms.Timer updateTimer = new() { Interval = 6 * 60 * 60 * 1000 };
+    private readonly ToolStripMenuItem updateStatus = new("更新を確認していません") { Enabled = false };
+    private readonly ToolStripMenuItem applyUpdate = new("更新を適用して再起動") { Enabled = false };
+    private static readonly uint TaskbarCreated = RegisterWindowMessage("TaskbarCreated");
     private readonly MMDeviceEnumerator enumerator = new();
     private WasapiOut? player;
     private AudioFileReader? reader;
@@ -35,6 +41,7 @@ public sealed class MainForm : Form
     private bool exiting;
     private bool loading = true;
     private bool hotkeysRegistered;
+    private bool resourcesDisposed;
     private readonly Dictionary<int, SoundShortcut> soundHotkeys = [];
     private string? playingPath;
     private readonly string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OtoPlayer", "settings.json");
@@ -42,9 +49,13 @@ public sealed class MainForm : Form
     private sealed record SoundFile(string Path, string Shortcut = "未設定") { public string Name => $"[{Shortcut}]  {System.IO.Path.GetFileName(Path)}"; }
     private sealed record OutputDevice(string Id, string Name);
 
-    public MainForm()
+    public MainForm(AppUpdates updates)
     {
-        Text = "音鳴らしますねぇ！";
+        this.updates = updates;
+        using (var stream = typeof(MainForm).Assembly.GetManifestResourceStream("OtoPlayer.app.ico")!)
+        using (var sourceIcon = new Icon(stream, new Size(32, 32))) appIcon = (Icon)sourceIcon.Clone();
+        Icon = appIcon;
+        Text = $"音鳴らしますねぇ！ v{Application.ProductVersion.Split('+')[0]}";
         Size = new Size(850, 600); MinimumSize = new Size(820, 480);
         StartPosition = FormStartPosition.CenterScreen;
         Font = new Font("Yu Gothic UI", 10);
@@ -84,9 +95,21 @@ public sealed class MainForm : Form
         menu.Items.Add("再生／停止 (Ctrl + Alt + F9)", null, (_, _) => TogglePlayback());
         menu.Items.Add("停止", null, (_, _) => Stop());
         menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(updateStatus);
+        menu.Items.Add("更新を確認", null, async (_, _) => await updates.CheckAsync());
+        menu.Items.Add(applyUpdate);
+        applyUpdate.Click += (_, _) => {
+            if (!updates.HasPendingUpdate) return;
+            updates.RestartOnExit = true; exiting = true; Save(); Stop(); Close();
+        };
+        menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("終了", null, (_, _) => { exiting = true; Close(); });
-        tray = new NotifyIcon { Icon = SystemIcons.Application, Text = "音鳴らしますねぇ！", ContextMenuStrip = menu, Visible = true };
+        tray = new NotifyIcon { Icon = appIcon, Text = "音鳴らしますねぇ！", ContextMenuStrip = menu, Visible = true };
         tray.DoubleClick += (_, _) => Restore();
+        updates.StatusChanged += UpdateStatusChanged;
+        updates.UpdateReady += UpdateReady;
+        updateTimer.Tick += async (_, _) => await updates.CheckAsync();
+        Shown += async (_, _) => { updateTimer.Start(); await updates.CheckAsync(); };
         files.DoubleClick += (_, _) => Play();
         volume.ValueChanged += (_, _) => { volumeLabel.Text = $"音量 {volume.Value}%"; if (reader != null) reader.Volume = volume.Value / 100f; Save(); };
         loop.CheckedChanged += (_, _) => Save();
@@ -102,6 +125,18 @@ public sealed class MainForm : Form
         var button = new Button { Text = text, AutoSize = true, Height = 32 }; button.Click += action; return button;
     }
     private void Restore() { Show(); WindowState = FormWindowState.Normal; Activate(); }
+    private void UpdateStatusChanged(string message)
+    {
+        if (IsDisposed || Disposing) return;
+        updateStatus.Text = message;
+        applyUpdate.Enabled = updates.HasPendingUpdate;
+    }
+    private void UpdateReady()
+    {
+        if (IsDisposed || Disposing) return;
+        applyUpdate.Enabled = true;
+        tray.ShowBalloonTip(4000, "更新の準備ができました", "再生は続行できます。トレイから終了すると更新します。", ToolTipIcon.Info);
+    }
     private static bool SamePath(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
     private void UpdateShortcutLabels()
     {
@@ -276,6 +311,12 @@ public sealed class MainForm : Form
     }
     protected override void WndProc(ref Message m)
     {
+        if (TaskbarCreated != 0 && m.Msg == TaskbarCreated && tray != null && !exiting)
+        {
+            tray.Visible = false;
+            tray.Icon = appIcon;
+            tray.Visible = true;
+        }
         if (m.Msg == 0x0312)
         {
             if (m.WParam == 1) TogglePlayback();
@@ -297,11 +338,18 @@ public sealed class MainForm : Form
     }
     protected override void Dispose(bool disposing)
     {
-        if (disposing) { Stop(); tray.Visible = false; tray.Dispose(); enumerator.Dispose(); }
+        if (disposing && !resourcesDisposed) {
+            resourcesDisposed = true;
+            updateTimer.Stop(); updateTimer.Dispose();
+            updates.StatusChanged -= UpdateStatusChanged; updates.UpdateReady -= UpdateReady;
+            Stop(); tray.Visible = false; tray.Dispose(); appIcon.Dispose(); enumerator.Dispose();
+        }
         base.Dispose(disposing);
     }
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint modifiers, uint key);
     [DllImport("user32.dll")]
     private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    private static extern uint RegisterWindowMessage(string message);
 }

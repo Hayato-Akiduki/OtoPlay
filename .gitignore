@@ -3,3 +3,6 @@ OtoPlayer/obj/
 .dotnet/
 .nuget/
 dist/
+.tools/
+**/bin/
+**/obj/
