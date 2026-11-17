@@ -1,10 +1,10 @@
-# 音鳴らしますねぇ！
+# 音ならしますよっ！
 
 ## Windows 常駐アプリ（おすすめ）
 
-リポジトリ名は **OtoPlay**、アプリ名は **音鳴らしますねぇ！** です。
+リポジトリ名は **OtoPlay**、アプリ名は **音ならしますよっ！** です。
 
-[Releases](https://github.com/Hayato-Akiduki/OtoPlay/releases/latest) から **HayatoAkiduki.OtoPlay-win-Setup.exe** をダウンロードして実行してください。スタートメニュー・デスクトップに「音鳴らしますねぇ！」が追加されます。Windows x64 用で、.NET ランタイムは同梱しています。音声ファイルは同梱していません。
+[Releases](https://github.com/Hayato-Akiduki/OtoPlay/releases/latest) から **HayatoAkiduki.OtoPlay-win-Setup.exe** をダウンロードして実行してください。スタートメニュー・デスクトップに「音ならしますよっ！」が追加されます。Windows x64 用で、.NET ランタイムは同梱しています。音声ファイルは同梱していません。
 
 旧 ZIP 版を使用している場合は、トレイの右クリック →「終了」で終了してからインストールしてください。音声一覧・ショートカット・音量などの既存設定は引き継ぎます。VB-CABLE ドライバーはインストール済みのものを使用します。
 

@@ -55,7 +55,7 @@ public sealed class MainForm : Form
         using (var stream = typeof(MainForm).Assembly.GetManifestResourceStream("OtoPlayer.app.ico")!)
         using (var sourceIcon = new Icon(stream, new Size(32, 32))) appIcon = (Icon)sourceIcon.Clone();
         Icon = appIcon;
-        Text = $"音鳴らしますねぇ！ v{Application.ProductVersion.Split('+')[0]}";
+        Text = $"音ならしますよっ！ v{Application.ProductVersion.Split('+')[0]}";
         Size = new Size(850, 600); MinimumSize = new Size(820, 480);
         StartPosition = FormStartPosition.CenterScreen;
         Font = new Font("Yu Gothic UI", 10);
@@ -69,7 +69,7 @@ public sealed class MainForm : Form
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 50));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38));
-        layout.Controls.Add(new Label { Text = "音鳴らしますねぇ！", Font = new Font(Font.FontFamily, 20, FontStyle.Bold), AutoSize = true }, 0, 0);
+        layout.Controls.Add(new Label { Text = "音ならしますよっ！", Font = new Font(Font.FontFamily, 20, FontStyle.Bold), AutoSize = true }, 0, 0);
         layout.Controls.Add(new Label { Text = "出力先は CABLE Input ／ 通話アプリのマイクは CABLE Output\n× で常駐。Ctrl + Alt + F9: 再生／停止 ／ Ctrl + Alt + F10: 停止", Dock = DockStyle.Fill }, 0, 1);
         var outputRow = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2 };
         outputRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); outputRow.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
@@ -104,7 +104,7 @@ public sealed class MainForm : Form
         };
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("終了", null, (_, _) => { exiting = true; Close(); });
-        tray = new NotifyIcon { Icon = appIcon, Text = "音鳴らしますねぇ！", ContextMenuStrip = menu, Visible = true };
+        tray = new NotifyIcon { Icon = appIcon, Text = "音ならしますよっ！", ContextMenuStrip = menu, Visible = true };
         tray.DoubleClick += (_, _) => Restore();
         updates.StatusChanged += UpdateStatusChanged;
         updates.UpdateReady += UpdateReady;

@@ -19,7 +19,7 @@ try {
     Copy-Item (Join-Path $runtime.FullName 'LICENSE.TXT') "$publish/DOTNET-LICENSE.txt"
     Copy-Item (Join-Path $runtime.FullName 'THIRD-PARTY-NOTICES.TXT') "$publish/DOTNET-THIRD-PARTY-NOTICES.txt"
     if (!(Test-Path .tools/vpk.exe)) { Run dotnet @('tool', 'install', 'vpk', '--tool-path', '.tools', '--version', '1.2.161') }
-    Run ./.tools/vpk.exe @('pack', '--packId', 'HayatoAkiduki.OtoPlay', '--packVersion', $Version, '--packDir', $publish, '--mainExe', 'OtoPlayer.exe', '--packTitle', '音鳴らしますねぇ！', '--packAuthors', 'Hayato-Akiduki', '--icon', 'OtoPlayer/Assets/app.ico', '--runtime', 'win-x64', '--outputDir', $staging, '--skip-updates')
+    Run ./.tools/vpk.exe @('pack', '--packId', 'HayatoAkiduki.OtoPlay', '--packVersion', $Version, '--packDir', $publish, '--mainExe', 'OtoPlayer.exe', '--packTitle', '音ならしますよっ！', '--packAuthors', 'Hayato-Akiduki', '--icon', 'OtoPlayer/Assets/app.ico', '--runtime', 'win-x64', '--outputDir', $staging, '--skip-updates')
     [IO.Directory]::CreateDirectory((Join-Path $root $releases)) | Out-Null
     Copy-Item "$staging/*" $releases/ -Force
     Run dotnet @('run', '--project', 'tests/OtoPlayer.Checks', '-c', 'Release', '--', $releases)

@@ -18,4 +18,4 @@ const server = http.createServer(async (req, res) => {
   }
 });
 server.on('error', error => { console.error(error.message); process.exitCode = 1; });
-server.listen(3210, '127.0.0.1', () => console.log('音鳴らしますねぇ！ http://127.0.0.1:3210  (終了: Ctrl+C)'));
+server.listen(3210, '127.0.0.1', () => console.log('音ならしますよっ！ http://127.0.0.1:3210  (終了: Ctrl+C)'));

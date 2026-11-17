@@ -44,5 +44,5 @@ jobs:
             exit 0
           fi
           mapfile -d '' assets < <(find release -type f -print0)
-          gh release create "$GITHUB_REF_NAME" "${assets[@]}" --repo "$GITHUB_REPOSITORY" --verify-tag --draft --title "音鳴らしますねぇ！ $GITHUB_REF_NAME" --generate-notes
+          gh release create "$GITHUB_REF_NAME" "${assets[@]}" --repo "$GITHUB_REPOSITORY" --verify-tag --draft --title "音ならしますよっ！ $GITHUB_REF_NAME" --generate-notes
           gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false --latest
